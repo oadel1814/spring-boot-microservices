@@ -50,6 +50,6 @@ public class DataSeeder implements CommandLineRunner {
             }
         }
 
-        System.out.println("✅ Rating data seeded successfully!");
+        System.out.println("Rating data seeded successfully!");
     }
 }
