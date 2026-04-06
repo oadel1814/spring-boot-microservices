@@ -30,7 +30,7 @@ public class MovieResource {
     }
 
     @RequestMapping("/{movieId}")
-    public MovieSummary getMovieInfo(@PathVariable("movieId") String movieId) {
+    public MovieSummary getMovieInfo(@PathVariable("movieId") String movieId) throws InterruptedException {
 
         // 1. Check cache first
         Optional<MovieCache> cached = cacheRepository.findById(movieId);
@@ -39,15 +39,22 @@ public class MovieResource {
             return toSummary(cached.get());
         }
 
-        // 2. Cache miss - fetch from MovieDB
-        System.out.println("Cache miss -> fetching from MovieDB: " + movieId);
-        MovieSummary movie = restTemplate.getForObject(
-                "https://api.themoviedb.org/3/movie/" + movieId + "?api_key=" + apiKey,
-                MovieSummary.class
+        // 2. Cache miss - generate mock data with simulated delay
+        System.out.println("Cache miss -> generating data for movieId: " + movieId);
+        try {
+            Thread.sleep(3000); // simulate slow external API call
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+
+        // Generate mock movie data
+        MovieSummary movie = new MovieSummary(
+                movieId,
+                "Movie Title " + movieId,
+                "This is the description for movie " + movieId
         );
 
         // 3. Save to MongoDB cache
-        assert movie != null;
         MovieCache toCache = new MovieCache(
                 movieId,
                 movie.getTitle(),
@@ -57,13 +64,13 @@ public class MovieResource {
         cacheRepository.save(toCache);
 
         return movie;
-    }
+        }
 
     private MovieSummary toSummary(MovieCache movieCache) {
         return new MovieSummary(
-                movieCache.getMovieId(),
-                movieCache.getMovieName(),
-                movieCache.getDescription()
+                movieCache.getCachedMovieId(),
+                movieCache.getCachedMovieName(),
+                movieCache.getCachedDescription()
         );
     }
 }

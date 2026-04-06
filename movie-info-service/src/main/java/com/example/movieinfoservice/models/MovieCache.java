@@ -12,8 +12,8 @@ import java.time.LocalDate;
 @Document(collection = "movies")
 public class MovieCache extends Movie{
     @Id
-    private String  movieId;
-    private String movieName;
-    private String description;
+    private String  cachedMovieId;
+    private String cachedMovieName;
+    private String cachedDescription;
     private LocalDate cachedAt;
 }
