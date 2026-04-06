@@ -25,3 +25,4 @@ You can run each project either using your IDE or *mvn spring-boot:run* starting
 * Movie Info - http://localhost:8082/movies/{movieId}
 * Ratings Data - http://localhost:8083/ratings/{userId}
 * Hystrix Dashboard - Go to http://localhost:8081/hystrix. Then enter *https://localhost:8081/actuator/hystrix.stream* to the inputbox.
+# IMDB-Microservices-Clone

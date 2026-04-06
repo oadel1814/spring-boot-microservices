@@ -1,31 +1,23 @@
 package com.example.ratingsservice.models;
+import lombok.*;
+import javax.persistence.*;
 
+@Entity
+@Table(name = "ratings")
+@IdClass(RatingId.class)
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Rating {
 
-    private String movieId;
+    @Id
+    @Column(name = "user_id")
+    private int userId;
+
+    @Id
+    @Column(name = "movie_id")
+    private int movieId;
+
+    @Column(name = "rating", nullable = false)
     private int rating;
-
-    public Rating() {
-    }
-
-    public Rating(String movieId, int rating) {
-        this.movieId = movieId;
-        this.rating = rating;
-    }
-
-    public String getMovieId() {
-        return movieId;
-    }
-
-    public void setMovieId(String movieId) {
-        this.movieId = movieId;
-    }
-
-    public int getRating() {
-        return rating;
-    }
-
-    public void setRating(int rating) {
-        this.rating = rating;
-    }
 }
