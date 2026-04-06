@@ -19,6 +19,7 @@
 .settings
 .springBeans
 .vscode
+.gitignore
 /code
 MANIFEST.MF
 _site/
