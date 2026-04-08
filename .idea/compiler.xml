@@ -10,6 +10,7 @@
         <module name="movie-info-service" />
         <module name="discovery-server" />
         <module name="ratings-service" />
+        <module name="ratings-service (1)" />
         <module name="movie-catalog-service" />
       </profile>
     </annotationProcessing>
@@ -20,6 +21,7 @@
       <module name="movie-catalog-service" options="-parameters" />
       <module name="movie-info-service" options="-parameters" />
       <module name="ratings-service" options="-parameters" />
+      <module name="ratings-service (1)" options="-parameters" />
     </option>
   </component>
 </project>

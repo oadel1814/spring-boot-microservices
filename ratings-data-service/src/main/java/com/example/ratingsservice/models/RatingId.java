@@ -10,6 +10,6 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RatingId implements Serializable {
-    private int userId;
-    private int movieId;
+    private String userId;
+    private String movieId;
 }

@@ -8,15 +8,16 @@ import javax.persistence.*;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@Setter
 public class Rating {
 
     @Id
     @Column(name = "user_id")
-    private int userId;
+    private String userId;
 
     @Id
     @Column(name = "movie_id")
-    private int movieId;
+    private String movieId;
 
     @Column(name = "rating", nullable = false)
     private int rating;
