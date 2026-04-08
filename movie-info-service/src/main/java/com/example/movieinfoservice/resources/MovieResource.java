@@ -36,7 +36,6 @@ public class MovieResource {
 
     @GetMapping("/{movieId}")
     public ResponseEntity<Movie> getMovieInfo(@PathVariable String movieId) {
-
         // Cache hit
         return cacheRepository.findById(movieId)
                 .map(cached -> {

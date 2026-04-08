@@ -126,7 +126,6 @@
 
 
     <build>
-
             <extensions>
                 <extension>
                     <groupId>kr.motd.maven</groupId>
@@ -148,18 +147,38 @@
                     <url>jdbc:mysql://localhost:3307/ratings_db</url>
                     <user>root</user>
                     <!--change this to your mysql password ya atooof-->
-                    <password>Atoof000000</password>
+                    <password>Root@1234</password>
                 </configuration>
             </plugin>
+
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${project.build.directory}/generated-sources/protobuf/java</source>
+                                <source>${project.build.directory}/generated-sources/protobuf/grpc-java</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
 
             <plugin>
                 <groupId>org.xolstice.maven.plugins</groupId>
                 <artifactId>protobuf-maven-plugin</artifactId>
                 <version>0.6.1</version>
                 <configuration>
-                    <protocArtifact>com.google.protobuf:protoc:3.25.1:exe:${os.detected.classifier}</protocArtifact>
                     <pluginId>grpc-java</pluginId>
-                    <pluginArtifact>io.grpc:protoc-gen-grpc-java:1.62.2:exe:${os.detected.classifier}</pluginArtifact>
+                    <protocArtifact>com.google.protobuf:protoc:3.21.7:exe:linux-x86_64</protocArtifact>
+                    <pluginArtifact>io.grpc:protoc-gen-grpc-java:1.50.2:exe:linux-x86_64</pluginArtifact>
                 </configuration>
                 <executions>
                     <execution>

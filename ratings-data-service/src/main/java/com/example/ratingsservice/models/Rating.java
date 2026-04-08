@@ -13,11 +13,11 @@ public class Rating {
 
     @Id
     @Column(name = "user_id")
-    private String userId;
+    private int userId;
 
     @Id
     @Column(name = "movie_id")
-    private String movieId;
+    private int movieId;
 
     @Column(name = "rating", nullable = false)
     private int rating;

@@ -35,8 +35,8 @@ public class DataSeeder implements CommandLineRunner {
                         : 1 + random.nextInt(5);  // 1–5
 
                 Rating rating = new Rating();
-                rating.setUserId(String.valueOf(userId));
-                rating.setMovieId(String.valueOf(movie));
+                rating.setUserId(userId);
+                rating.setMovieId(movie);
                 rating.setRating(score);
                 ratings.add(rating);
             }
