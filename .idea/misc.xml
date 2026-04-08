@@ -4,13 +4,12 @@
   <component name="MavenProjectsManager">
     <option name="originalFiles">
       <list>
-        <option value="$PROJECT_DIR$/movie/pom.xml" />
-        <option value="$PROJECT_DIR$/movie-catalog-service/pom.xml" />
+        <option value="$PROJECT_DIR$/trending-movies-service/pom.xml" />
         <option value="$PROJECT_DIR$/movie-info-service/pom.xml" />
+        <option value="$PROJECT_DIR$/movie-catalog-service/pom.xml" />
         <option value="$PROJECT_DIR$/discovery-server/pom.xml" />
-        <option value="$PROJECT_DIR$/ratings-data-service/pom.xml" />
       </list>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_16" default="true" project-jdk-name="openjdk-15" project-jdk-type="JavaSDK" />
+  <component name="ProjectRootManager" version="2" project-jdk-name="17" project-jdk-type="JavaSDK" />
 </project>
