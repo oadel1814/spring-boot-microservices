@@ -1,54 +1,40 @@
 package com.moviecatalogservice.resources;
 
+import com.moviecatalogservice.TrendingServiceGrpc;
+import  com.moviecatalogservice.Trending;
 import com.moviecatalogservice.models.CatalogItem;
-import com.moviecatalogservice.models.Movie;
 import com.moviecatalogservice.models.Rating;
-import com.moviecatalogservice.models.UserRating;
 import com.moviecatalogservice.services.MovieInfoService;
 import com.moviecatalogservice.services.UserRatingService;
-import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
-
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import net.devh.boot.grpc.client.inject.GrpcClient;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
-
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequestMapping("/catalog")
 public class MovieCatalogResource {
 
     private final RestTemplate restTemplate;
-
     private final MovieInfoService movieInfoService;
-
-    private final TrendingGrpcClient trendingClient;
-
     private final UserRatingService userRatingService;
+
+    @GrpcClient("trendingService")
+    private TrendingServiceGrpc.TrendingServiceBlockingStub trendingClient;
 
     public MovieCatalogResource(RestTemplate restTemplate,
                                 MovieInfoService movieInfoService,
                                 UserRatingService userRatingService) {
-
         this.restTemplate = restTemplate;
         this.movieInfoService = movieInfoService;
-        this.trendingClient = trendingClient;
         this.userRatingService = userRatingService;
     }
 
     /**
-     * Makes a call to MovieInfoService to get movieId, name and description,
-     * Makes a call to RatingsService to get ratings
-     * Accumulates both data to create a MovieCatalog
-     * @param userId
-     * @return CatalogItem that contains name, description and rating
+     * Existing User Catalog Endpoint
      */
     @RequestMapping("/{userId}")
     public List<CatalogItem> getCatalog(@PathVariable String userId) {
@@ -56,14 +42,23 @@ public class MovieCatalogResource {
         return ratings.stream().map(movieInfoService::getCatalogItem).collect(Collectors.toList());
     }
 
-    @GetMapping("/trending")
-    public List<CatalogItem> getTrendingMovies(@RequestParam(defaultValue = "10") int limit) {
-        List<String> ids = trendingClient.getTopMovies(limit);
-        //preserve order
-        return ids.stream()
-                .map(id -> new Rating(id, 0))
-                .map(movieInfoService::getCatalogItem)
-                .toList();
+    /**
+     * NEW: Trending Movies Endpoint (via gRPC)
+     * Test this at: http://localhost:8081/catalog/trending/5
+     */
+    @GetMapping("/trending/{limit}")
+    public List<String> getTrending(@PathVariable("limit") int limit) {
+        // We use the full package name for the gRPC Movie to avoid
+        // conflicts with your local 'models.Movie' class
+        com.moviecatalogservice.TopRequest request = com.moviecatalogservice.TopRequest.newBuilder()
+                .setLimit(limit)
+                .build();
+        com.moviecatalogservice.TopResponse response = trendingClient.getTopMovies(request);
 
+        List<com.moviecatalogservice.Movie> trendingMovies = response.getMoviesList();
+
+        return trendingMovies.stream()
+                .map(m -> "Ranked Movie: " + m.getTitle() + " | Avg Rating: " + m.getRating())
+                .collect(Collectors.toList());
     }
 }

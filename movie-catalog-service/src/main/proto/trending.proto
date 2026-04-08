@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+option java_package = "com.moviecatalogservice";
+option java_multiple_files = true;
+
+service TrendingService {
+  rpc GetTopMovies (TopRequest) returns (TopResponse);
+}
+
+
+message TopRequest {
+  int32 limit = 1;
+}
+
+ message  Movie {
+    int32 id=1;
+    string title=2;
+    double rating=3;
+ }
+
+message TopResponse {
+  repeated Movie movies=1;
+}
