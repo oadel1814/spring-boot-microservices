@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,10 +44,13 @@ public class MoviesService {
         var cachedData=cache.findByType(type);
         //read from cache (mongodb)
         if(!cachedData.isEmpty()  && cachedData.get(0).getUpdatedAt().plusMinutes(10).isAfter(LocalDateTime.now())){
-               return  cachedData.get(0).getMovies();
+            System.out.println("Cache hit in Trending Service for type: " + type);
+           return  cachedData.get(0).getMovies();
         }
+
         // read from mySql
-        List<Movie> data=moviesRepository.getTopByRating(limit).stream().collect(Collectors.toList());
+        System.out.println("Cache miss in Trending Service for type: " + type + ". Fetching from MySQL...");
+        List<Movie> data = new ArrayList<>(moviesRepository.getTopByRating(limit));
         setFreshData(data,type);
         return  data;
     }

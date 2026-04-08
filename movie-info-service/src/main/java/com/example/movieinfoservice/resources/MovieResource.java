@@ -35,8 +35,7 @@ public class MovieResource {
     }
 
     @GetMapping("/{movieId}")
-    public ResponseEntity<Movie> getMovieInfo(@PathVariable String movieId) {
-        // Cache hit
+    public ResponseEntity<?> getMovieInfo(@PathVariable String movieId) {
         return cacheRepository.findById(movieId)
                 .map(cached -> {
                     System.out.println("Cache hit -> movieId: " + movieId);
@@ -57,32 +56,53 @@ public class MovieResource {
         return ResponseEntity.ok("Cache cleared successfully!");
     }
 
+
     @ExceptionHandler(ResponseStatusException.class)
-    public ResponseEntity<Map<String, Object>> handleException(ResponseStatusException ex, HttpServletRequest request) {
-        return ResponseEntity.status(ex.getStatus()).body(Map.of(
-                "status",  ex.getStatus().value(),
-                "message", ex.getReason() != null ? ex.getReason() : "Unexpected error"
-        ));
+    public ResponseEntity<Map<String, Object>> handleResponseStatus(
+            ResponseStatusException ex, HttpServletRequest request) {
+        return buildError(ex.getStatus(), ex.getReason(), request.getRequestURI());
     }
 
+    @ExceptionHandler(HttpClientErrorException.NotFound.class)
+    public ResponseEntity<Map<String, Object>> handleNotFound(
+            HttpClientErrorException.NotFound ex, HttpServletRequest request) {
+        return buildError(HttpStatus.NOT_FOUND, "Movie not found on TMDB", request.getRequestURI());
+    }
+
+    @ExceptionHandler(HttpClientErrorException.Unauthorized.class)
+    public ResponseEntity<Map<String, Object>> handleUnauthorized(
+            HttpClientErrorException.Unauthorized ex, HttpServletRequest request) {
+        return buildError(HttpStatus.UNAUTHORIZED, "Invalid TMDB API key — check your api.key config", request.getRequestURI());
+    }
+
+    @ExceptionHandler(RestClientException.class)
+    public ResponseEntity<Map<String, Object>> handleRestClient(
+            RestClientException ex, HttpServletRequest request) {
+        return buildError(HttpStatus.SERVICE_UNAVAILABLE, "Could not reach TMDB: " + ex.getMessage(), request.getRequestURI());
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Map<String, Object>> handleGeneric(
+            Exception ex, HttpServletRequest request) {
+        return buildError(HttpStatus.INTERNAL_SERVER_ERROR, "Unexpected error: " + ex.getMessage(), request.getRequestURI());
+    }
+
+
     private Movie fetchFromTmdb(String movieId) {
-        try {
-            String url = TMDB_URL + movieId + "?api_key=" + apiKey;
-            MovieSummary summary = restTemplate.getForObject(url, MovieSummary.class);
+        String url = TMDB_URL + movieId + "?api_key=" + apiKey;
+        MovieSummary summary = restTemplate.getForObject(url, MovieSummary.class);
+        if (summary == null)
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Movie not found on TMDB");
+        return new Movie(movieId, summary.getTitle(), summary.getOverview());
+    }
 
-            if (summary == null)
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Movie not found");
-
-            return new Movie(movieId, summary.getTitle(), summary.getOverview());
-
-        } catch (HttpClientErrorException.NotFound e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Movie ID not found: " + movieId);
-        } catch (HttpClientErrorException.Unauthorized e) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid TMDB API key");
-        } catch (HttpClientErrorException e) {
-            throw new ResponseStatusException(e.getStatusCode(), "TMDB error: " + e.getMessage());
-        } catch (RestClientException e) {
-            throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "Could not reach TMDB");
-        }
+    private ResponseEntity<Map<String, Object>> buildError(HttpStatus status, String message, String path) {
+        return ResponseEntity.status(status).body(Map.of(
+                "status",    status.value(),
+                "error",     status.getReasonPhrase(),
+                "message",   message != null ? message : "Unexpected error",
+                "path",      path,
+                "timestamp", LocalDateTime.now().toString()
+        ));
     }
 }

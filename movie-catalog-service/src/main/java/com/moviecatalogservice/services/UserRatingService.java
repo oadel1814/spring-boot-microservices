@@ -31,12 +31,12 @@ public class UserRatingService {
                 // Wait/Sleep for 5 seconds before sending another request to the failed service
                 @HystrixProperty(name = "circuitBreaker.sleepWindowInMilliseconds", value = "5000")
         })
-    public UserRating getUserRating(@PathVariable("userId") String userId) {
+    public UserRating getUserRating(@PathVariable String userId) {
         String ratingsUrl = "http://ratings-data-service/ratings/" + userId;
         return Objects.requireNonNull(restTemplate.getForObject(ratingsUrl, UserRating.class));
     }
 
-    public UserRating getFallbackUserRatings(@PathVariable("userId") String userId) {
+    public UserRating getFallbackUserRatings(@PathVariable String userId) {
         UserRating userRating = new UserRating();
         userRating.setUserId(userId);
         userRating.setRatings(Collections.singletonList(

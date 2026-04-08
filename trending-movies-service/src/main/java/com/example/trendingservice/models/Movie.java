@@ -12,9 +12,10 @@ import javax.persistence.Table;
 @Data
 public class Movie {
     @Id
-    private Integer movie_id;
+    private int movie_id;
+
     @Column(name = "avg_rating")
-    private Double rating;
+    private double rating;
 
     // Don't forget your Getters/Setters or @Data from Lombok!
 }

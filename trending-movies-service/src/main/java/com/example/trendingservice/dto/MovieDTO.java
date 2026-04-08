@@ -1,13 +1,15 @@
 package com.example.trendingservice.dto;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.*;
 import org.springframework.context.annotation.Bean;
 
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
+@Setter
+@Getter
 public class MovieDTO {
 
     private String movieId;

@@ -19,8 +19,8 @@ public class RatingsResource {
     private RatingRepository ratingRepository;
 
     @RequestMapping("/{userId}")
-    public UserRating getRatingsOfUser(@PathVariable int userId) {
-        List<Rating> ratings = ratingRepository.findByUserId(userId);
+    public UserRating getRatingsOfUser(@PathVariable String userId) {
+        List<Rating> ratings = ratingRepository.findByUserId(Integer.parseInt(userId));
         return new UserRating(ratings);
     }
 }
