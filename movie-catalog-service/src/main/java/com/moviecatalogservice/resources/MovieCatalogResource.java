@@ -44,7 +44,7 @@ public class MovieCatalogResource {
 
     /**
      * NEW: Trending Movies Endpoint (via gRPC)
-     * Test this at: http://localhost:8081/catalog/trending/5
+     * Test this at: http://localhost:8085/catalog/trending/5
      */
     @GetMapping("/trending/{limit}")
     public List<String> getTrending(@PathVariable("limit") int limit) {

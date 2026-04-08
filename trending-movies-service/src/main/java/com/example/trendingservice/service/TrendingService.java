@@ -35,22 +35,20 @@ public class TrendingService extends TrendingServiceGrpc.TrendingServiceImplBase
         for(Movie movie:movies) {
             int movieId=movie.getMovie_id();
             double movieRating=movie.getRating();
-            String title="";
+            String title="Unknown";
             //getting name till now ,but it is not the most performant way(am using rest )
-            com.example.trendingservice.dto.MovieDTO movieDto=new MovieDTO("","","");
+            MovieDTO movieDto=new MovieDTO("","","");
             try{movieDto =
                     restTemplate.getForObject(
                             "http://movie-info-service/movies/" + movieId,
                             com.example.trendingservice.dto.MovieDTO.class
                     );}
-            catch (org.springframework.web.client.HttpClientErrorException.NotFound e){
+            catch (Exception e){
                 title="Unknown";
             }
 
-            if(movieDto.getName()==null) {
-                 title="unkown";
-            }else {
-                title =movieDto.getName();
+            if (movieDto.getName() != null) {
+                title = movieDto.getName();
             }
 //            title="fight club";
 

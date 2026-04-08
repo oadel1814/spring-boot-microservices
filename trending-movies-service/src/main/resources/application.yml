@@ -5,9 +5,9 @@ spring:
     name: trending-movies-service  # ← FIXED (was ratings-service)
   # --- MYSQL (JPA) CONFIGURATION ---
   datasource:
-    url: jdbc:mysql://localhost:3307/ratings_db?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
+    url: jdbc:mysql://localhost:3306/ratings_db?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
     username: root
-    password: Atoof000000
+    password: Root@1234
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
