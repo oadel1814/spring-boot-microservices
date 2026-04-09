@@ -3,11 +3,18 @@ server:
 spring:
   application:
     name: trending-movies-service  # ← FIXED (was ratings-service)
+  redis:
+    host: localhost
+    port: 6379
+  cache:
+    type: redis
+    redis:
+      time-to-live: 12000000  # in ms (12000 seconds)
   # --- MYSQL (JPA) CONFIGURATION ---
   datasource:
     url: jdbc:mysql://localhost:3306/ratings_db?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
     username: root
-    password: Root@1234
+    password: pass
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:

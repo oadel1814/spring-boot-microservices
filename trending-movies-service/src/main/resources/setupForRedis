@@ -1,0 +1,6 @@
+#  in terminal
+docker run -d --name redis -p 6379:6379 redis:7
+docker exec -it redis redis-cli
+
+# in redis-cli
+ redis-cli CONFIG SET maxmemory-policy allkeys-lfu
